@@ -1,0 +1,7 @@
+base   autoindentcontrol
+author Kazutaka Miyasaka
+email  kazmiya@gmail.com
+date   2010-03-13
+name   AutoIndentControl Plugin
+desc   Provides a toggle switch to control the auto-indent feature in the edit window
+url    http://www.dokuwiki.org/plugin:autoindentcontrol
