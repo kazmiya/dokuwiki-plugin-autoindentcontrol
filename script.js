@@ -8,7 +8,7 @@
  */
 
 addInitEvent(function() {
-    if (!JSINFO || !JSINFO.plugin_autoindentcontrol) return;
+    if (typeof JSINFO !== 'object' || !JSINFO.plugin_autoindentcontrol) return;
 
     // edit window exists and is editable?
     var field = $('wiki__text');
@@ -24,7 +24,7 @@ addInitEvent(function() {
             || (!auto.showToggle && auto.defaultOFF)) auto.toggle();
 });
 
-if (JSINFO && JSINFO.plugin_autoindentcontrol) {
+if (typeof JSINFO === 'object' && JSINFO.plugin_autoindentcontrol) {
     JSINFO.plugin_autoindentcontrol.toggle = function() {
         var field = $('wiki__text');
         if (!field) return;
@@ -36,9 +36,17 @@ if (JSINFO && JSINFO.plugin_autoindentcontrol) {
             // enabled => disable
             var events = field.events;
             if (!events) return;
-            for (var $$guid in events.keydown) {
-                if (events.keydown[$$guid].toString().match(/^function\s+keyHandler\b/)) {
-                    removeEvent(field, 'keydown', events.keydown[$$guid]);
+            if (!auto.isLemming && is_opera) {
+                for (var $$guid in events.keypress) {
+                    if (events.keypress[$$guid].toString().match(/^function\s+keyHandler\b/)) {
+                        removeEvent(field, 'keypress', events.keypress[$$guid]);
+                    }
+                }
+            } else {
+                for (var $$guid in events.keydown) {
+                    if (events.keydown[$$guid].toString().match(/^function\s+keyHandler\b/)) {
+                        removeEvent(field, 'keydown', events.keydown[$$guid]);
+                    }
                 }
             }
             if (ctl) {
@@ -50,7 +58,11 @@ if (JSINFO && JSINFO.plugin_autoindentcontrol) {
             auto.enabled = false;
         } else {
             // disabled => enable
-            addEvent(field, 'keydown', keyHandler);
+            if (!auto.isLemming && is_opera) {
+                addEvent(field, 'keypress', keyHandler);
+            } else {
+                addEvent(field, 'keydown', keyHandler);
+            }
             if (ctl) {
                 ctl.title = 'Auto-Indent: ON';
                 ctl.innerHTML = '<span>Auto-Indent: ON</span>';

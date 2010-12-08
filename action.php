@@ -36,6 +36,7 @@ class action_plugin_autoindentcontrol extends DokuWiki_Action_Plugin {
         $JSINFO['plugin_autoindentcontrol'] = array(
             'defaultOFF' => (boolean) !$this->getConf('default_behavior'),
             'showToggle' => (boolean) $this->getConf('show_toggle_switch'),
+            'isLemming'  => (boolean) !function_exists('valid_input_set'),
         );
     }
 }
