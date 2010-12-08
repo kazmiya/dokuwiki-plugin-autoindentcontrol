@@ -1,12 +1,15 @@
+=====================================
+AutoIndentControl Plugin for DokuWiki
+=====================================
 
-====== AutoIndentControl Plugin for DokuWiki ======
+Provides a toggle switch to control auto-indent function in edit window.
 
-Provides a toggle switch to control the auto-indent feature in 
-the edit window.
+Documentation
+  http://www.dokuwiki.org/plugin:autoindentcontrol
 
-All documentation for this plugin is available online at:
+Download URL for the Plugin Manager
+  http://github.com/kazmiya/dokuwiki-plugin-autoindentcontrol/zipball/master
 
-  * http://www.dokuwiki.org/plugin:autoindentcontrol
-
-(c) 2010 by Kazutaka Miyasaka <kazmiya@gmail.com>
 See COPYING for license info.
+
+Copyright (c) 2010 Kazutaka Miyasaka <kazmiya@gmail.com>

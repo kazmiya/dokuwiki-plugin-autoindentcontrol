@@ -5,28 +5,28 @@
  * @author  Kazutaka Miyasaka <kazmiya@gmail.com>
  */
 
-#plugin__autoindentcontrol__indentctl {
-    float: right;
-    width: 32px;
-    height: 20px;
-    overflow: hidden;
-    cursor: pointer;
-    background-image: url(images/indent-toggle.png);
-    background-position: 0px 0px;
+#plugin__autoindentcontrol__switch {
+  float: right;
+  width: 32px;
+  height: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  background-image: url(images/indent-toggle.png);
+  background-position: 0px 0px;
 }
 
-#plugin__autoindentcontrol__indentctl:hover {
-    background-position: 0px -20px;
+#plugin__autoindentcontrol__switch:hover {
+  background-position: 0px -20px;
 }
 
-#plugin__autoindentcontrol__indentctl.autoindenton {
-    background-position: 0px -40px;
+#plugin__autoindentcontrol__switch.autoIndentON {
+  background-position: 0px -40px;
 }
 
-#plugin__autoindentcontrol__indentctl.autoindenton:hover {
-    background-position: 0px -60px;
+#plugin__autoindentcontrol__switch.autoIndentON:hover {
+  background-position: 0px -60px;
 }
 
-#plugin__autoindentcontrol__indentctl span {
-    visibility: hidden;
+#plugin__autoindentcontrol__switch span {
+  visibility: hidden;
 }
