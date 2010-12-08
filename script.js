@@ -1,89 +1,109 @@
 /**
  * AutoIndentControl Plugin for DokuWiki / script.js
- * 
- * Toggles the auto-indent feature in the edit window
- * 
+ *
+ * Provides a toggle switch to control auto-indent function in edit window.
+ *
  * @license GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author  Kazutaka Miyasaka <kazmiya@gmail.com>
  */
 
 addInitEvent(function() {
-    if (typeof JSINFO !== 'object' || !JSINFO.plugin_autoindentcontrol) return;
+    var editor, auto, userOFF;
 
-    // edit window exists and is editable?
-    var field = $('wiki__text');
-    if (!field || field.readOnly) return;
+    if (typeof JSINFO !== 'object' || !JSINFO.plugin_autoindentcontrol) {
+        return;
+    }
 
-    var auto = JSINFO.plugin_autoindentcontrol;
+    // check if we are in edit window
+    editor = $('wiki__text');
+
+    if (!editor || editor.readOnly) {
+        return;
+    }
+
+    auto = JSINFO.plugin_autoindentcontrol;
     auto.enabled = true;
 
-    if (auto.showToggle) auto.initIndentCtl();
-    var userOFF = DokuCookie.getValue('autoIndentOFF');
+    // init toggle button
+    if (auto.showToggle) {
+        initAutoIndentControl();
+    }
 
-    if ((auto.showToggle && (userOFF || isUndefined(userOFF) && auto.defaultOFF))
-            || (!auto.showToggle && auto.defaultOFF)) auto.toggle();
-});
+    // set initial state of auto-indent functoinality
+    userOFF = DokuCookie.getValue('autoIndentOFF');
 
-if (typeof JSINFO === 'object' && JSINFO.plugin_autoindentcontrol) {
-    JSINFO.plugin_autoindentcontrol.toggle = function() {
-        var field = $('wiki__text');
-        if (!field) return;
+    if (
+        (!auto.showToggle && auto.defaultOFF) ||
+        (auto.showToggle &&
+            (userOFF || isUndefined(userOFF) && auto.defaultOFF)
+        )
+    ) {
+        toggleAutoIndent();
+    }
 
-        var auto = JSINFO.plugin_autoindentcontrol;
-        var ctl = $('plugin__autoindentcontrol__indentctl');
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-        if (auto.enabled) {
-            // enabled => disable
-            var events = field.events;
-            if (!events) return;
-            if (!auto.isLemming && is_opera) {
-                for (var $$guid in events.keypress) {
-                    if (events.keypress[$$guid].toString().match(/^function\s+keyHandler\b/)) {
-                        removeEvent(field, 'keypress', events.keypress[$$guid]);
-                    }
-                }
-            } else {
-                for (var $$guid in events.keydown) {
-                    if (events.keydown[$$guid].toString().match(/^function\s+keyHandler\b/)) {
-                        removeEvent(field, 'keydown', events.keydown[$$guid]);
-                    }
-                }
-            }
-            if (ctl) {
-                ctl.title = 'Auto-Indent: OFF';
-                ctl.innerHTML = '<span>Auto-Indent: OFF</span>';
-                ctl.className = 'autoindentoff';
-                DokuCookie.setValue('autoIndentOFF', 1);
-            }
-            auto.enabled = false;
-        } else {
-            // disabled => enable
-            if (!auto.isLemming && is_opera) {
-                addEvent(field, 'keypress', keyHandler);
-            } else {
-                addEvent(field, 'keydown', keyHandler);
-            }
-            if (ctl) {
-                ctl.title = 'Auto-Indent: ON';
-                ctl.innerHTML = '<span>Auto-Indent: ON</span>';
-                ctl.className = 'autoindenton';
-                DokuCookie.setValue('autoIndentOFF', '');
-            }
-            auto.enabled = true;
+    /**
+     * Initializes auto-indent control button
+     */
+    function initAutoIndentControl() {
+        var resizer, button;
+
+        resizer = $('size__ctl');
+
+        if (!resizer) {
+            return;
         }
-    };
 
-    JSINFO.plugin_autoindentcontrol.initIndentCtl = function() {
-        var sizeCtl = $('size__ctl');
-        if (!sizeCtl) return;
+        // create a toggle button to control auto-indent function
+        button = document.createElement('div');
+        button.id = 'plugin__autoindentcontrol__switch';
+        button.title = 'Auto-Indent: ON';
+        button.innerHTML = '<span>Auto-Indent: ON</span>';
+        button.className = 'autoIndentON';
 
-        var ctl = document.createElement('div');
-        ctl.id = 'plugin__autoindentcontrol__indentctl';
-        ctl.title = 'Auto-Indent: ON';
-        ctl.innerHTML = '<span>Auto-Indent: ON</span>';
-        ctl.className = 'autoindenton';
-        sizeCtl.parentNode.insertBefore(ctl, sizeCtl.nextSibling);
+        // insert toggle button
+        resizer.parentNode.insertBefore(button, resizer.nextSibling);
 
-        addEvent(ctl, 'click', JSINFO.plugin_autoindentcontrol.toggle);
-    };
-}
+        addEvent(button, 'click', toggleAutoIndent);
+    }
+
+    /**
+     * Toggles auto-indent functionality
+     */
+    function toggleAutoIndent() {
+        var type, guid, func, button, onoff;
+
+        type = (is_opera && !auto.isLemming) ? 'keypress' : 'keydown';
+
+        // handle events on edit window
+        if (auto.enabled) {
+            auto.enabled = false;
+
+            if (editor.events) {
+                for (guid in editor.events[type]) {
+                    func = editor.events[type][guid].toString();
+
+                    if (func.match(/^function\s+keyHandler\b/)) {
+                        removeEvent(editor, type, editor.events[type][guid]);
+                    }
+                }
+            }
+        } else {
+            auto.enabled = true;
+            addEvent(editor, type, keyHandler);
+        }
+
+        button = $('plugin__autoindentcontrol__switch');
+
+        // switch toggle button
+        if (button) {
+            onoff = auto.enabled ? 'ON' : 'OFF';
+
+            button.title = 'Auto-Indent: ' + onoff;
+            button.innerHTML = '<span>Auto-Indent: ' + onoff + '</span>';
+            button.className = 'autoIndent' + onoff;
+            DokuCookie.setValue('autoIndentOFF', auto.enabled ? '' : 1);
+        }
+    }
+});
