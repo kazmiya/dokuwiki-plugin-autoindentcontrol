@@ -28,6 +28,78 @@
      * for DokuWiki Angua
      */
     function _Angua() {
+        var $editor,
+            auto;
+
+        $editor = jQuery('#wiki__text');
+
+        if (!$editor.length || $editor.attr('readOnly')) {
+            return;
+        }
+
+        auto = JSINFO.plugin_autoindentcontrol;
+        auto.enabled = true;
+
+        // init toggle button
+        if (auto.showToggle) {
+            initAutoIndentControl();
+        }
+
+        // set initial state of auto-indent functoinality
+        userOFF = DokuCookie.getValue('autoIndentOFF');
+
+        if (
+            (!auto.showToggle && auto.defaultOFF) ||
+            (auto.showToggle &&
+                (userOFF || typeof userOFF === 'undefined' && auto.defaultOFF)
+            )
+        ) {
+            toggleAutoIndent();
+        }
+
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+        /**
+         * Initializes auto-indent control button
+         */
+        function initAutoIndentControl() {
+            jQuery('<div />')
+                .attr('id', 'plugin__autoindentcontrol__switch')
+                .attr('class', 'autoIndentON')
+                .attr('title', 'Auto-Indent: ON')
+                .html('<span>Auto-Indent: ON</span>')
+                .insertAfter('#size__ctl')
+                .bind('click', toggleAutoIndent);
+        }
+
+        /**
+         * Toggles auto-indent functionality
+         */
+        function toggleAutoIndent() {
+            var type,
+                onoff;
+
+            type = jQuery.browser.opera ? 'keypress' : 'keydown';
+
+            // handle events on edit window
+            if (auto.enabled) {
+                onoff = 'OFF';
+                auto.enabled = false;
+                $editor.unbind(type);
+                DokuCookie.setValue('autoIndentOFF', 1);
+            } else {
+                onoff = 'ON';
+                auto.enabled = true;
+                $editor.bind(type, dw_editor.keyHandler);
+                DokuCookie.setValue('autoIndentOFF', '');
+            }
+
+            // switch toggle button
+            jQuery('#plugin__autoindentcontrol__switch')
+                .attr('title', 'Auto-Indent: ' + onoff)
+                .attr('class', 'autoIndent' + onoff)
+                .html('<span>Auto-Indent: ' + onoff + '</span>');
+        }
     }
 
     /**
