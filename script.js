@@ -34,7 +34,9 @@
      * for DokuWiki Anteater or earlier
      */
     function _Anteater() {
-        var editor, auto, userOFF;
+        var editor,
+            auto,
+            userOFF;
 
         // check if we are in edit window
         editor = $('wiki__text');
@@ -69,7 +71,8 @@
          * Initializes auto-indent control button
          */
         function initAutoIndentControl() {
-            var resizer, button;
+            var resizer,
+                button;
 
             resizer = $('size__ctl');
 
@@ -94,7 +97,11 @@
          * Toggles auto-indent functionality
          */
         function toggleAutoIndent() {
-            var type, guid, func, button, onoff;
+            var type,
+                guid,
+                func,
+                button,
+                onoff;
 
             type = (is_opera && !auto.isLemming) ? 'keypress' : 'keydown';
 
